@@ -55,7 +55,7 @@
 #include <QMainWindow>
 #include <QSerialPort>
 
-#include "lcddisplay.h"
+#include "lcdwindow.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -99,7 +99,7 @@ private:
     SettingsDialog *m_settings = nullptr;
     QSerialPort *m_serial = nullptr;
 
-    LcdDisplay *lcd = nullptr;
+    LcdWindow *lcd = nullptr;
 };
 
 #endif // MAINWINDOW_H

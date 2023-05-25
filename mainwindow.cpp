@@ -90,8 +90,20 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_console, &Console::getData, this, &MainWindow::writeData);
 
 
-    lcd = new LcdDisplay(this);
+    lcd = new LcdWindow(this);
     lcd->show();
+
+    connect(lcd,SIGNAL(closeLcd()),this,SLOT(close()));
+
+    lcd->setSymbol(0, 0, QString('1'));
+    lcd->setSymbol(0, 1, QString('2'));
+    lcd->setSymbol(0, 2, QString('3'));
+
+    lcd->setSymbol(1, 1, QString('h'));
+    lcd->setSymbol(1, 2, QString('e'));
+    lcd->setSymbol(1, 3, QString('l'));
+    lcd->setSymbol(1, 4, QString('l'));
+    lcd->setSymbol(1, 5, QString('o'));
 }
 //! [3]
 

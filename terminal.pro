@@ -5,14 +5,14 @@ TARGET = terminal
 TEMPLATE = app
 
 SOURCES += \
-    lcddisplay.cpp \
+    lcdwindow.cpp \
     main.cpp \
     mainwindow.cpp \
     settingsdialog.cpp \
     console.cpp
 
 HEADERS += \
-    lcddisplay.h \
+    lcdwindow.h \
     mainwindow.h \
     settingsdialog.h \
     console.h
