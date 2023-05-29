@@ -95,15 +95,49 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(lcd,SIGNAL(closeLcd()),this,SLOT(close()));
 
-    lcd->setSymbol(0, 0, QString('1'));
-    lcd->setSymbol(0, 1, QString('2'));
-    lcd->setSymbol(0, 2, QString('3'));
+    for(int i=0; i<33; ++i){
+        lcd->setSymbol('E');
+    }
+    /*
+    lcd->setSymbol(0x48);
+    lcd->setSymbol('2');
+    lcd->setSymbol('3');
 
-    lcd->setSymbol(1, 1, QString('h'));
-    lcd->setSymbol(1, 2, QString('e'));
-    lcd->setSymbol(1, 3, QString('l'));
-    lcd->setSymbol(1, 4, QString('l'));
-    lcd->setSymbol(1, 5, QString('o'));
+    lcd->setSymbol('h');
+    lcd->setSymbol('e');
+    lcd->setSymbol('l');
+    lcd->setSymbol('l');
+    lcd->setSymbol('o');
+    lcd->setSymbol('o');
+    lcd->setSymbol('o');
+    lcd->setSymbol('o');
+    lcd->setSymbol('o');
+    lcd->setSymbol('o');
+    lcd->setSymbol('o');
+    lcd->setSymbol('o');
+    lcd->setSymbol('o');
+    lcd->setSymbol('w');
+    lcd->setSymbol(0x20);
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('E');
+    lcd->setSymbol('F');
+    lcd->setSymbol('C');
+
+
+    lcd->updateDisplay(1);
+    */
+
 }
 //! [3]
 

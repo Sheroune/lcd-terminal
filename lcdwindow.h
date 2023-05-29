@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QMainWindow>
 #include <QLabel>
+#include <QGridLayout>
 
 class LcdWindow : public QMainWindow
 {
@@ -13,15 +14,22 @@ public:
     explicit LcdWindow(QWidget *parent = nullptr);
     ~LcdWindow();
 
+public slots:
     void clearDisplay();
-    void setSymbol(int row, int col, const QString &symbol);
+    void setSymbol(const char &symbol);
+    void updateDisplay(bool down);
 
 protected:
   void closeEvent(QCloseEvent *event);
 
 private:
     void setupUi();
+
     QLabel *display[2][16];
+    int displayRowPos;
+
+    char storedSymbols[16][16];
+    int cursor;
 
 signals:
        void closeLcd();

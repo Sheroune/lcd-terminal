@@ -12,6 +12,7 @@ SOURCES += \
     console.cpp
 
 HEADERS += \
+    lcdinput.h \
     lcdwindow.h \
     mainwindow.h \
     settingsdialog.h \
