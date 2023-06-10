@@ -24,6 +24,7 @@ protected:
 
 private:
     void setupUi();
+    void shiftSymbols();
 
     QLabel *display[2][16];
     int displayRowPos;

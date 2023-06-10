@@ -41,6 +41,78 @@ void LcdWindow::clearDisplay() {
     }
 }
 
+void LcdWindow::shiftSymbols() {
+    char tmp[16][16];
+    memcpy(tmp, storedSymbols, sizeof(storedSymbols));
+
+    int shift = 16 - (cursor % 16);
+
+    for (int i = 0; i < shift; i++) {
+        storedSymbols[(cursor+i) / 16][(cursor+i) % 16] = '\0';
+    }
+
+    if (cursor % 16 == 0) {
+        bool check = 0;
+        for (int i = 0; i < 16; i++) {
+            if (storedSymbols[(cursor+i) / 16][(cursor+i) % 16] != '\0') {
+                check = 1;
+                break;
+            }
+        }
+        if (!check) {
+            storedSymbols[cursor / 16][cursor % 16] = '\n';
+        }
+    }
+
+    // last row
+    if(cursor / 16 == 15){
+        updateDisplay(1);
+        return;
+    }
+
+    display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold");
+    displayRowPos = 1;
+
+    cursor += shift;
+
+    display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold; border: 3px solid red");
+
+    // line break
+    for (int i = 0; i < shift; i++) {
+        storedSymbols[(cursor+i) / 16][(cursor+i) % 16] = tmp[(cursor-shift+i) / 16][(cursor-shift+i) % 16];
+    }
+    // filling with '\0' the rest of the line
+    for (int i = shift; i < 16; i++) {
+        storedSymbols[(cursor+i) / 16][(cursor+i) % 16] = '\0';
+    }
+
+    shift = 16 - (cursor % 16);
+    int vCursor = cursor + shift;
+
+    while (vCursor < 255) {
+        storedSymbols[vCursor / 16][vCursor % 16] = tmp[(vCursor - shift) / 16][(vCursor - shift) % 16];
+        vCursor++;
+    }
+
+    if (cursor % 16 == 0) {
+        bool check = 0;
+        for (int i = 0; i < 16; i++) {
+            if (storedSymbols[(cursor+i) / 16][(cursor+i) % 16] != '\0') {
+                check = 1;
+                break;
+            }
+        }
+        if (!check) {
+            storedSymbols[cursor / 16][cursor % 16] = '\n';
+        }
+    }
+
+
+    updateDisplay(1);
+}
+
+// update information on the LCD
+// 1 in bottom; 0 in top
 void LcdWindow::updateDisplay(bool down){
     clearDisplay();
 
@@ -49,6 +121,9 @@ void LcdWindow::updateDisplay(bool down){
     if (down) {
         for (int row = 0; row < 2; ++row) {
             for (int col = 0; col < 16; ++col) {
+                if(storedSymbols[(cursor / 16) - pos][col] == '\n') {
+                    continue;
+                }
                 display[row][col]->setText(QString(storedSymbols[(cursor / 16) - pos][col]));
             }
             pos = 0;
@@ -59,7 +134,9 @@ void LcdWindow::updateDisplay(bool down){
         pos = 0;
         for (int row = 0; row < 2; ++row) {
             for (int col = 0; col < 16; ++col) {
-                // error if cursor row > 3!
+                if(storedSymbols[(cursor / 16) + pos][col] == '\n') {
+                    continue;
+                }
                 display[row][col]->setText(QString(storedSymbols[(cursor / 16) + pos][col]));
             }
             pos = 1;
@@ -67,62 +144,105 @@ void LcdWindow::updateDisplay(bool down){
     }
 }
 
+// check and set symbol into lcd
+// some kind of text editor
 void LcdWindow::setSymbol(const char &symbol) {
+    qDebug() << "Symbol: " << (int)symbol << "\tCursor: " << cursor;
+
     // Enter
     if (symbol == 0x0d) {
-
+        if (cursor == 256) {
+            return;
+        }
+        shiftSymbols();
     }
+
     // Up Arrow
     else if (symbol == 0x18) {
 
     }
+
     // Down Arrow
     else if (symbol == 0x19) {
 
     }
+
     // Right Arrow
     else if (symbol == 0x1a) {
         if (cursor == 256) {
             return;
         }
-        if (cursor == 255 && storedSymbols[cursor / 16][cursor % 16] != '\0') {
+        else if (cursor == 255 && storedSymbols[cursor / 16][cursor % 16] != '\0') {
             display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold");
             cursor++;
             display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold; border-right: 3px solid red");
             return;
         }
-        if (cursor % 16 == 15) {
-            int tmp = cursor;
-            do {
-                tmp++;
-            } while(storedSymbols[tmp / 16][tmp % 16] == '\0' && tmp != 255);
-
-            if (tmp == 255) {
-                return;
-            }
-
+        else if (cursor % 16 == 15 && storedSymbols[(cursor+1) / 16][(cursor+1) % 16] != '\0') {
             display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold");
-            cursor = tmp;
+            cursor++;
             displayRowPos = 1;
             updateDisplay(1);
             display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold; border: 3px solid red");
         }
-        else if (storedSymbols[cursor / 16][cursor % 16] != '\0'){
+        else if (cursor % 16 == 0 && storedSymbols[cursor / 16][cursor % 16] == '\n' && cursor < 240) {
+            for (int i = cursor+1; i < 256; i++) {
+                if (storedSymbols[i / 16][i % 16] != '\0') {
+                    display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold");
+                    cursor = i;
+                    displayRowPos = 1;
+                    display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold; border: 3px solid red");
+
+                    updateDisplay(1);
+                    break;
+                }
+            }
+
+        }
+        else if (storedSymbols[cursor / 16][cursor % 16] == '\0') {
+            for (int i = cursor+1; i < 256; i++) {
+                if (storedSymbols[i / 16][i % 16] != '\0') {
+                    display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold");
+                    cursor = i;
+
+                    displayRowPos = 1;
+                    display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold; border: 3px solid red");
+
+                    updateDisplay(1);
+                    break;
+                }
+            }
+        }
+        else if (storedSymbols[cursor / 16][cursor % 16] != '\0') {
+            // check \n
             display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold");
             cursor++;
             display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold; border: 3px solid red");
         }
     }
+
     // Left Arrow
     else if (symbol == 0x1b) {
         if (cursor == 0) {
             return;
         }
-        if (cursor % 16 == 0) {
+        else if (cursor == 256) {
+            cursor--;
+            display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold; border: 3px solid red");
+        }
+        else if (cursor % 16 == 0) {
             display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold");
             do {
                 cursor--;
+                if (cursor == 0 || (cursor % 16 == 0 && storedSymbols[cursor / 16][cursor % 16] == '\0')) {
+                    break;
+                }
             } while(storedSymbols[cursor / 16][cursor % 16] == '\0');
+
+            if (cursor % 16 != 15 && storedSymbols[cursor / 16][cursor % 16] != '\n') {
+                cursor++;
+            }
+
             displayRowPos = 0;
             updateDisplay(0);
             display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold; border: 3px solid red");
@@ -133,8 +253,49 @@ void LcdWindow::setSymbol(const char &symbol) {
             display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold; border: 3px solid red");
         }
     }
+
     // Delete
     else if (symbol == 0x7f) {
+        if (cursor >= 255) {
+            return;
+        }
+        if (cursor % 16 != 15 && storedSymbols[(cursor+1) / 16][(cursor+1) % 16] != '\0') {
+            int shift = 16 - (cursor % 16);
+            for (int i = 1; i < shift; i++) {
+                storedSymbols[(cursor+i) / 16][(cursor+i) % 16] = storedSymbols[(cursor+i+1) / 16][(cursor+i+1) % 16];
+                display[displayRowPos][(cursor+i) % 16]->setText(QString(storedSymbols[(cursor+i+1) / 16][(cursor+i+1) % 16]));
+            }
+            storedSymbols[(cursor+shift-1) / 16][(cursor+shift-1) % 16] = '\0';
+            display[displayRowPos][(cursor+shift-1) % 16]->setText(QString('\0'));
+        }
+        else if (cursor % 16 == 15 && storedSymbols[(cursor+1) / 16][(cursor+1) % 16] != '\0') {
+            if (storedSymbols[(cursor+1) / 16][(cursor+1) % 16] == '\n') {
+                char tmp[16][16];
+                memcpy(tmp, storedSymbols, sizeof(storedSymbols));
+                int vCursor = cursor + 17;
+                while (vCursor < 255) {
+                    storedSymbols[(vCursor-16) / 16][(vCursor-16) % 16] = tmp[vCursor / 16][vCursor % 16];
+                    vCursor++;
+                }
+                // need to update display
+                if (displayRowPos == 0) {
+                    for (int i = cursor + 1; i < cursor + 17; i++) {
+                        display[1][i % 16]->setText(QString(storedSymbols[i / 16][i % 16]));
+                    }
+                }
+            }
+            else {
+                for (int i = 1; i < 17; i++) {
+                    storedSymbols[(cursor+i) / 16][(cursor+i) % 16] = storedSymbols[(cursor+i+1) / 16][(cursor+i+1) % 16];
+                    display[displayRowPos][(cursor+i) % 16]->setText(QString(storedSymbols[(cursor+i+1) / 16][(cursor+i+1) % 16]));
+                }
+                storedSymbols[(cursor+16) / 16][(cursor+16) % 16] = '\0';
+                display[displayRowPos][(cursor+16) % 16]->setText(QString('\0'));
+            }
+
+
+
+        }
 
     }
     // Backspace
@@ -143,7 +304,7 @@ void LcdWindow::setSymbol(const char &symbol) {
     }
     // Other allowed symbols
     else if (symbol >= 0x20 && symbol <= 0x7e) {
-        qDebug() << "Symbol: " << symbol << "; Hex: " << hex << (int)symbol;
+        // qDebug() << "Symbol: " << symbol << "; Hex: " << hex << (int)symbol;
 
         // check forbidden cursor pos
         if (cursor == 256){

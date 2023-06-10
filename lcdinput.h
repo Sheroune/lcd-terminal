@@ -38,11 +38,11 @@ public:
 
             if (ok) {
                 // Display the entered integer
-                qDebug() << "Entered integer: " << inputValue;
+                //qDebug() << "Entered integer: " << inputValue;
                 QMetaObject::invokeMethod(parent, "setSymbol", Q_ARG(const char&, inputValue));
             } else {
                 // Display an error message
-                qDebug() << "Invalid input!";
+                //qDebug() << "Invalid input!";
             }
         });
 

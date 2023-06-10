@@ -95,48 +95,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(lcd,SIGNAL(closeLcd()),this,SLOT(close()));
 
-    for(int i=0; i<33; ++i){
-        lcd->setSymbol('E');
-    }
-    /*
-    lcd->setSymbol(0x48);
-    lcd->setSymbol('2');
-    lcd->setSymbol('3');
-
-    lcd->setSymbol('h');
-    lcd->setSymbol('e');
-    lcd->setSymbol('l');
-    lcd->setSymbol('l');
-    lcd->setSymbol('o');
-    lcd->setSymbol('o');
-    lcd->setSymbol('o');
-    lcd->setSymbol('o');
-    lcd->setSymbol('o');
-    lcd->setSymbol('o');
-    lcd->setSymbol('o');
-    lcd->setSymbol('o');
-    lcd->setSymbol('o');
-    lcd->setSymbol('w');
-    lcd->setSymbol(0x20);
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('E');
-    lcd->setSymbol('F');
-    lcd->setSymbol('C');
-
-
-    lcd->updateDisplay(1);
-    */
+    //for(int i=0; i<241; ++i){
+    //    lcd->setSymbol((33 + i) % 93 + 33);
+    //}
 
 }
 //! [3]
