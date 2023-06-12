@@ -80,10 +80,25 @@ void Console::keyPressEvent(QKeyEvent *e)
 {
     switch (e->key()) {
     case Qt::Key_Backspace:
+        emit getData(e->text().toLocal8Bit());
+        break;
     case Qt::Key_Left:
+        emit getData(e->text().toLocal8Bit());
+        break;
     case Qt::Key_Right:
+        emit getData(e->text().toLocal8Bit());
+        break;
     case Qt::Key_Up:
+        break;
+        emit getData(e->text().toLocal8Bit());
     case Qt::Key_Down:
+        emit getData(e->text().toLocal8Bit());
+        break;
+    case Qt::Key_Delete:
+        emit getData(e->text().toLocal8Bit());
+        break;
+    case Qt::Key_Enter:
+        emit getData(e->text().toLocal8Bit());
         break;
     default:
         if (m_localEchoEnabled)
