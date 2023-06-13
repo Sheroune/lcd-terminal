@@ -21,8 +21,9 @@ LcdWindow::LcdWindow(QWidget *parent) : QMainWindow(parent) {
         }
     }
 
-    LcdInput *inp = new LcdInput(this);
-    inp->show();
+    // form to test input
+    //LcdInput *inp = new LcdInput(this);
+    //inp->show();
 }
 
 LcdWindow::~LcdWindow() {
