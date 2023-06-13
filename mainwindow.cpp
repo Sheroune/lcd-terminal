@@ -161,6 +161,11 @@ void MainWindow::about()
 void MainWindow::writeData(const QByteArray &data)
 {
     m_serial->write(data);
+
+    // set symbols in lcd
+    for (char symbol : data) {
+        lcd->setSymbol(symbol);
+    }
 }
 //! [6]
 
@@ -169,6 +174,11 @@ void MainWindow::readData()
 {
     const QByteArray data = m_serial->readAll();
     m_console->putData(data);
+
+    // set symbols in lcd
+    for (char symbol : data) {
+        lcd->setSymbol(symbol);
+    }
 }
 //! [7]
 

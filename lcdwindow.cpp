@@ -432,6 +432,9 @@ void LcdWindow::setSymbol(const char &symbol) {
                         storedSymbols[cursor / 16][cursor % 16] = '\n';
                     }
 
+                    // need to update display
+                    updateDisplay(0);
+
                     return;
                 }
             }

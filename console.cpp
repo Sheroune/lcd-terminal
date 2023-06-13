@@ -83,16 +83,16 @@ void Console::keyPressEvent(QKeyEvent *e)
         emit getData(e->text().toLocal8Bit());
         break;
     case Qt::Key_Left:
-        emit getData(e->text().toLocal8Bit());
+        emit getData(QString((char)0x1b).toLocal8Bit());
         break;
     case Qt::Key_Right:
-        emit getData(e->text().toLocal8Bit());
+        emit getData(QString((char)0x1a).toLocal8Bit());
         break;
     case Qt::Key_Up:
+        emit getData(QString((char)0x18).toLocal8Bit());
         break;
-        emit getData(e->text().toLocal8Bit());
     case Qt::Key_Down:
-        emit getData(e->text().toLocal8Bit());
+        emit getData(QString((char)0x19).toLocal8Bit());
         break;
     case Qt::Key_Delete:
         emit getData(e->text().toLocal8Bit());
