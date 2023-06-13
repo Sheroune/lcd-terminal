@@ -314,13 +314,23 @@ void LcdWindow::setSymbol(const char &symbol) {
                 // need to update display
                 if (displayRowPos == 0) {
                     for (int i = cursor; i < cursor + 16; i++) {
-                        display[0][i % 16]->setText(QString(storedSymbols[i / 16][i % 16]));
+                        if (storedSymbols[i / 16][i % 16] != '\n') {
+                            display[0][i % 16]->setText(QString(storedSymbols[i / 16][i % 16]));
+                        }
+                        else {
+                            display[0][i % 16]->setText(QString('\0'));
+                        }
                         display[1][(i+16) % 16]->setText(QString(storedSymbols[(i+16) / 16][(i+16) % 16]));
                     }
                 }
                 else {
                     for (int i = cursor; i < cursor + 16; i++) {
-                        display[1][(i+16) % 16]->setText(QString(storedSymbols[i / 16][i % 16]));
+                        if (storedSymbols[i / 16][i % 16] != '\n') {
+                            display[1][(i+16) % 16]->setText(QString(storedSymbols[i / 16][i % 16]));
+                        }
+                        else {
+                            display[1][(i+16) % 16]->setText(QString('\0'));
+                        }
                     }
                 }
                 return;
@@ -367,6 +377,14 @@ void LcdWindow::setSymbol(const char &symbol) {
         if (cursor == 0) {
             return;
         }
+        if (cursor == 256) {
+            cursor--;
+            storedSymbols[cursor / 16][cursor % 16] = '\0';
+            display[displayRowPos][cursor % 16]->setText(QString('\0'));
+            display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold; border-left: 4px solid red");
+            return;
+        }
+
         if (cursor % 16 != 0) {
             int shift = 16 - (cursor % 16);
             for (int i = cursor-1; i < cursor+shift-1; i++) {
@@ -379,9 +397,9 @@ void LcdWindow::setSymbol(const char &symbol) {
             display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold;");
             cursor--;
 
-            if (cursor % 16 == 0 && storedSymbols[(cursor+1) / 16][(cursor+1) % 16] == '\0') {
-                storedSymbols[cursor / 16][cursor % 16] = '\n';
-            }
+            //if (cursor % 16 == 0 && storedSymbols[(cursor+1) / 16][(cursor+1) % 16] == '\0') {
+            //    storedSymbols[cursor / 16][cursor % 16] = '\n';
+            //}
 
             display[displayRowPos][cursor % 16]->setStyleSheet("background-color: black; color: green; font-family: Courier New; font-size: 40px; font-weight: bold; border-left: 4px solid red");
 
